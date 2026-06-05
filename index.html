@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ma Haven · Land Search</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Manrope:wght@300;400;500;600&display=swap');
+  :root {
+    --bg: #E8DBC0; --bg-soft: #F0E5CD; --bg-warm: #DCCDA8;
+    --ink: #1A1815; --ink-soft: #3A3833; --ink-muted: #6B6862;
+    --hair: rgba(26, 24, 21, 0.12); --hair-strong: rgba(26, 24, 21, 0.22);
+    --sage: #4A5A3F; --sage-deep: #2D4A2D;
+    --bronze: #7A5C3B; --gold: #B89358; --terra: #A0867A;
+    --link-direct: #2D4A2D; --link-catalog: #7A5C3B; --link-search: #A0867A;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'Manrope', system-ui, sans-serif; line-height: 1.55; }
+  .app { max-width: 1180px; margin: 0 auto; padding: 56px 28px 96px; }
+  @media (min-width: 720px) { .app { padding: 80px 56px 120px; } }
+  .editorial { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .eyebrow { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; color: var(--ink-muted); }
+  .label-cap { font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; color: var(--ink-muted); }
+  header.hero { padding-bottom: 56px; border-bottom: 1px solid var(--hair); margin-bottom: 56px; }
+  .hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; margin-bottom: 64px; flex-wrap: wrap; }
+  .hero-meta-l .num { font-family: 'Marcellus', serif; font-size: 13px; letter-spacing: 0.18em; color: var(--ink-muted); }
+  .hero-meta-l .small { font-size: 11.5px; color: var(--ink-muted); letter-spacing: 0.08em; }
+  .hero-meta-r { text-align: right; font-size: 11.5px; letter-spacing: 0.08em; color: var(--ink-muted); }
+  .hero-center { text-align: center; padding: 24px 0 32px; }
+  .hero-center .logo { display: block; margin: 0 auto 40px; width: 100%; max-width: 380px; height: auto; opacity: 0.95; }
+  @media (min-width: 720px) { .hero-center .logo { max-width: 520px; } }
+  .hero-center .eyebrow { display: block; margin-bottom: 20px; }
+  .hero-center h1 { font-family: 'Marcellus', serif; font-size: 30px; line-height: 1.15; max-width: 680px; margin: 0 auto; }
+  @media (min-width: 720px) { .hero-center h1 { font-size: 44px; } }
+  .hero-center h1 em { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .hero-center .lead { max-width: 580px; margin: 24px auto 0; font-size: 15px; color: var(--ink-soft); line-height: 1.7; }
+  .hero-ornament { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 40px auto 32px; max-width: 240px; }
+  .hero-ornament .line { flex: 1; height: 1px; background: var(--hair-strong); }
+  .hero-ornament .dot { width: 4px; height: 4px; background: var(--bronze); border-radius: 50%; }
+  .briefing { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); }
+  @media (min-width: 720px) { .briefing { grid-template-columns: repeat(5, 1fr); } }
+  .briefing .item { padding: 24px 20px; border-right: 1px solid var(--hair); }
+  .briefing .item:last-child { border-right: none; }
+  .briefing .item:nth-child(2n) { border-right: none; }
+  @media (min-width: 720px) { .briefing .item:nth-child(2n) { border-right: 1px solid var(--hair); } .briefing .item:last-child { border-right: none; } }
+  .briefing .item .label-cap { display: block; margin-bottom: 12px; font-size: 9.5px; }
+  .briefing .item .val { font-family: 'Marcellus', serif; font-size: 19px; }
+  .briefing .item .val em { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .refresh-strip { margin-top: 32px; padding: 16px 20px; background: rgba(74, 90, 63, 0.08); border-left: 2px solid var(--sage); font-size: 12.5px; color: var(--ink-soft); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .refresh-strip strong { color: var(--ink); }
+  .refresh-strip .right { color: var(--ink-muted); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+  nav.tabs { display: flex; gap: 36px; border-bottom: 1px solid var(--hair); margin-bottom: 56px; flex-wrap: wrap; }
+  nav.tabs button { background: none; border: none; padding: 0 0 18px; cursor: pointer; font-family: 'Marcellus', serif; color: var(--ink-muted); border-bottom: 1px solid transparent; margin-bottom: -1px; font-size: 14px; letter-spacing: 0.05em; display: flex; align-items: baseline; gap: 8px; }
+  nav.tabs button .tab-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11px; }
+  nav.tabs button.active { color: var(--ink); border-bottom-color: var(--ink); }
+  nav.tabs button.active .tab-num { color: var(--bronze); }
+  section.tab-section[hidden] { display: none; }
+  .section-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap; padding-bottom: 20px; border-bottom: 1px solid var(--hair); }
+  .section-header .eyebrow { display: block; margin-bottom: 8px; }
+  .section-header h2 { font-family: 'Marcellus', serif; font-size: 30px; line-height: 1.15; margin-bottom: 6px; }
+  .section-header h2 em { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .section-header p.count { font-size: 13px; color: var(--ink-muted); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+  .btn { font-family: 'Manrope', sans-serif; font-size: 12px; padding: 11px 18px; cursor: pointer; border: none; letter-spacing: 0.06em; }
+  .btn-primary { background: var(--ink); color: var(--bg-soft); }
+  .btn-secondary { background: transparent; color: var(--ink-muted); border: 1px solid var(--hair-strong); padding: 11px 16px; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; }
+  .actions { display: flex; gap: 12px; }
+  .note-box { color: var(--ink-soft); padding: 14px 18px; background: rgba(74, 90, 63, 0.06); border-left: 2px solid var(--sage); margin-bottom: 24px; line-height: 1.65; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; }
+  .note-box strong { font-weight: 500; font-style: normal; }
+  .link-legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 24px; font-size: 11.5px; color: var(--ink-muted); align-items: center; }
+  .link-legend .item { display: flex; align-items: center; gap: 6px; }
+  .link-legend .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .link-legend .dot.direct { background: var(--link-direct); }
+  .link-legend .dot.catalog { background: var(--link-catalog); }
+  .link-legend .dot.search { background: var(--link-search); }
+  .controls-bar { display: flex; gap: 24px; align-items: center; margin-bottom: 24px; flex-wrap: wrap; padding: 16px 0; border-bottom: 1px solid var(--hair); }
+  .controls-bar .group { display: flex; gap: 10px; align-items: center; }
+  .controls-bar label { color: var(--ink-muted); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500; }
+  .controls-bar select { background: transparent; border: none; border-bottom: 1px solid var(--hair); padding-bottom: 4px; font-family: 'Marcellus', serif; font-size: 14px; color: var(--ink); cursor: pointer; }
+  .toggle { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 12px; color: var(--ink-soft); }
+  .toggle input { cursor: pointer; }
+  .cards-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+  @media (min-width: 720px) { .cards-grid { grid-template-columns: 1fr 1fr; gap: 32px 40px; } }
+  .card { display: flex; flex-direction: column; position: relative; transition: opacity 0.2s; }
+  .card.is-hidden-card { opacity: 0.4; }
+  .card-image { aspect-ratio: 4 / 3; position: relative; background: var(--bg-warm); overflow: hidden; }
+  .card-image svg { width: 100%; height: 100%; display: block; }
+  .card-image .badge-rank { position: absolute; top: 16px; left: 16px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 14px; color: var(--bg-soft); background: rgba(26, 24, 21, 0.7); padding: 4px 10px; }
+  .card-image .badge-score { position: absolute; top: 16px; right: 16px; text-align: right; }
+  .card-image .badge-score .v { font-family: 'Marcellus', serif; font-size: 28px; line-height: 1; color: var(--ink); }
+  .card-image .badge-score .v.high { color: var(--sage-deep); }
+  .card-image .badge-score .v.top { color: var(--bronze); }
+  .card-image .badge-score .lbl { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 11px; color: var(--ink-soft); }
+  .card-image .badge-new { position: absolute; bottom: 16px; left: 16px; background: var(--gold); color: var(--ink); padding: 4px 10px; font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; }
+  .card-image .badge-fav { position: absolute; bottom: 16px; right: 16px; font-size: 22px; color: var(--bronze); cursor: pointer; user-select: none; line-height: 1; }
+  .card-image .badge-fav.off { color: rgba(255,255,255,0.5); }
+  .card-body { padding: 20px 0 0; display: flex; flex-direction: column; flex: 1; }
+  .card-body .card-region { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; color: var(--ink-muted); margin-bottom: 6px; }
+  .card-body h3 { font-family: 'Marcellus', serif; font-size: 20px; line-height: 1.25; margin-bottom: 12px; }
+  .card-meta-row { display: flex; gap: 20px; padding: 12px 0; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); margin-bottom: 16px; }
+  .card-meta-row .col .v { font-family: 'Marcellus', serif; font-size: 15px; margin-top: 4px; }
+  .card-notes { font-size: 13.5px; color: var(--ink-soft); line-height: 1.65; margin-bottom: 12px; flex: 1; }
+  .broker-info { font-size: 13px; color: var(--ink-soft); margin: 8px 0 12px; padding: 8px 0; line-height: 1.55; }
+  .broker-info .label-cap { font-size: 9.5px; margin-right: 4px; }
+  .broker-info strong { color: var(--ink); font-family: 'Marcellus', serif; font-weight: 400; }
+  .link-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; margin-bottom: 12px; font-family: 'Manrope', sans-serif; }
+  .link-tag.direct { background: rgba(45, 74, 45, 0.12); color: var(--link-direct); }
+  .link-tag.catalog { background: rgba(122, 92, 59, 0.14); color: var(--link-catalog); }
+  .link-tag.search { background: rgba(160, 134, 122, 0.16); color: var(--link-search); }
+  .link-tag .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .card-actions { display: flex; gap: 18px; padding-top: 12px; align-items: center; flex-wrap: wrap; }
+  .card-actions a, .card-actions button { font-family: 'Manrope', sans-serif; background: none; border: none; cursor: pointer; padding: 0; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; color: var(--ink-muted); }
+  .card-actions a.primary { color: var(--sage); }
+  .card-actions .hide-btn { margin-left: auto; }
+  .region-row { padding: 36px 0; border-top: 1px solid var(--hair); display: grid; grid-template-columns: 1fr; gap: 20px; }
+  .region-row:first-child { border-top: none; padding-top: 0; }
+  @media (min-width: 720px) { .region-row { grid-template-columns: 60px 1.4fr 1fr; gap: 32px; align-items: start; } }
+  .region-num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 28px; color: var(--bronze); }
+  .region-name { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 6px; }
+  .region-name h3 { font-family: 'Marcellus', serif; font-size: 24px; }
+  .region-fit { font-size: 9px; padding: 3px 9px; border: 1px solid currentColor; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500; }
+  .region-meta { font-size: 13px; color: var(--ink-muted); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .region-note { font-size: 14px; color: var(--ink-soft); margin-top: 14px; line-height: 1.7; }
+  .region-price-block { background: var(--bg-warm); padding: 18px 20px; }
+  .region-price { font-family: 'Marcellus', serif; font-size: 14px; line-height: 1.6; }
+  .broker-card { padding: 28px; border: 1px solid var(--hair); background: rgba(255, 255, 255, 0.4); margin-bottom: 20px; }
+  .broker-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 14px; flex-wrap: wrap; }
+  .broker-top h3 { font-family: 'Marcellus', serif; font-size: 21px; }
+  .broker-tag { font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500; padding: 4px 10px; border: 1px solid; }
+  .tag-top { color: var(--bronze); border-color: var(--bronze); }
+  .tag-regional { color: var(--sage); border-color: var(--sage); }
+  .broker-region { font-size: 13px; color: var(--ink-muted); margin-bottom: 14px; font-family: 'Cormorant Garamond', serif; font-style: italic; }
+  .broker-contacts { display: flex; flex-direction: column; gap: 5px; font-size: 13.5px; margin-bottom: 14px; }
+  .broker-contacts a { color: var(--sage); text-decoration: none; }
+  .broker-diff { color: var(--ink-soft); line-height: 1.6; margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--hair); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; }
+  .broker-status-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: end; }
+  .broker-status-row label { display: block; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+  .broker-status-row select, .broker-status-row input { width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--hair); padding-bottom: 6px; font-family: 'Marcellus', serif; font-size: 14px; color: var(--ink); }
+  .broker-notes-row { margin-top: 18px; }
+  .broker-notes-row label { display: block; font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+  .broker-notes-row textarea { width: 100%; background: transparent; border: 1px solid var(--hair); padding: 12px; font-family: 'Manrope', sans-serif; font-size: 13.5px; min-height: 64px; }
+  .broker-meta-actions { display: flex; justify-content: flex-end; margin-top: 14px; gap: 20px; }
+  .broker-meta-actions button { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-muted); background: none; border: none; cursor: pointer; }
+  .status-pill { display: inline-block; font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase; padding: 3px 9px; margin-left: 10px; font-family: 'Manrope', sans-serif; }
+  .status-contatar { background: rgba(122, 92, 59, 0.12); color: var(--bronze); }
+  .status-contatado { background: rgba(74, 90, 63, 0.14); color: var(--sage); }
+  .status-conversa { background: rgba(74, 90, 63, 0.22); color: var(--sage-deep); }
+  .status-visita { background: rgba(45, 74, 45, 0.2); color: var(--sage-deep); }
+  .status-descartado { background: rgba(107, 104, 98, 0.12); color: var(--ink-muted); }
+  .portal-group { margin-bottom: 40px; }
+  .portal-group .portal-title { padding-bottom: 12px; border-bottom: 1px solid var(--hair); margin-bottom: 16px; font-family: 'Marcellus', serif; font-size: 16px; display: flex; align-items: baseline; gap: 12px; }
+  .portal-group .portal-title .num { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; color: var(--bronze); }
+  .portal-links { display: grid; grid-template-columns: 1fr; gap: 4px 40px; }
+  @media (min-width: 720px) { .portal-links { grid-template-columns: 1fr 1fr 1fr; } }
+  .portal-links a { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; font-size: 13.5px; color: var(--ink-soft); text-decoration: none; }
+  .portal-links a:hover { color: var(--ink); }
+  footer { margin-top: 96px; padding-top: 32px; border-top: 1px solid var(--hair); font-size: 11.5px; color: var(--ink-muted); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer .l { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13.5px; }
+  .empty-state { padding: 72px 24px; text-align: center; border: 1px dashed var(--hair); font-size: 14px; color: var(--ink-muted); font-family: 'Cormorant Garamond', serif; font-style: italic; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hero">
+    <div class="hero-top">
+      <div class="hero-meta-l"><span class="num">Nº 02</span><span class="small">Expansion Search</span></div>
+      <div class="hero-meta-r">São Paulo · Brasil<br>v3.2 · jun · 2026</div>
+    </div>
+    <div class="hero-center">
+      <img class="logo" alt="Ma Haven" src="data:image/png;base64,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">
+      <span class="eyebrow">um interlúdio entre cidade e natureza</span>
+      <h1>Land <em>Search</em> Cockpit</h1>
+      <p class="lead">Inteligência regional, candidatos curados, corretores especializados e busca direcionada para o segundo terreno do empreendimento.</p>
+      <div class="hero-ornament"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+    </div>
+    <div class="briefing">
+      <div class="item"><div class="label-cap">Área mínima</div><div class="val">15 – 60 <em>ha</em></div></div>
+      <div class="item"><div class="label-cap">Distância</div><div class="val"><em>até</em> 2h de SP</div></div>
+      <div class="item"><div class="label-cap">Densidade</div><div class="val">20 – 30 <em>casas</em></div></div>
+      <div class="item"><div class="label-cap">Orçamento</div><div class="val"><em>flexível</em></div></div>
+      <div class="item"><div class="label-cap">Fechar em</div><div class="val">3 – 6 <em>meses</em></div></div>
+    </div>
+    <div class="refresh-strip"><span><strong>Última atualização:</strong> 1 de junho de 2026 · refresh automático toda segunda 8h</span><span class="right">corretormahavenapp.netlify.app</span></div>
+  </header>
+  <nav class="tabs">
+    <button class="active" data-tab="candidatos"><span class="tab-num">01</span><span>Candidatos</span></button>
+    <button data-tab="regioes"><span class="tab-num">02</span><span>Regiões</span></button>
+    <button data-tab="corretores"><span class="tab-num">03</span><span>Corretores</span></button>
+    <button data-tab="buscar"><span class="tab-num">04</span><span>Buscar</span></button>
+  </nav>
+  <section id="tab-candidatos" class="tab-section">
+    <div class="section-header">
+      <div><span class="eyebrow">01 · seleção curada</span><h2>Terrenos <em>candidatos</em></h2><p class="count" id="cand-count"></p></div>
+      <div class="actions"><button class="btn-secondary" id="btn-reset">Restaurar</button><button class="btn btn-primary" id="btn-add">＋ Novo</button></div>
+    </div>
+    <div class="note-box"><strong>Sobre os links.</strong> Verifique a tag de cada candidato antes de clicar. <strong>Listagem direta</strong> = anúncio individual com fotos e preço. <strong>Catálogo</strong> = site da corretora; busque pelo código no card. <strong>Busca</strong> = sem listagem específica encontrada; contatar o corretor sugerido.</div>
+    <div class="link-legend">
+      <div class="item"><span class="dot direct"></span> Listagem direta</div>
+      <div class="item"><span class="dot catalog"></span> Catálogo (use o código)</div>
+      <div class="item"><span class="dot search"></span> Sem listagem · contatar corretor</div>
+    </div>
+    <div class="controls-bar">
+      <div class="group"><label>Ordenar:</label><select id="sort-by"><option value="score">Score ↓</option><option value="area-desc">Área ↓</option><option value="area-asc">Área ↑</option><option value="price-desc">Preço ↓</option><option value="price-asc">Preço ↑</option></select></div>
+      <div class="group"><label>Região:</label><select id="filter-region"><option value="">Todas</option></select></div>
+      <div class="group"><label>Budget:</label><select id="filter-budget"><option value="">Todos</option><option value="yes">Até R$ 15M</option><option value="stretch">Acima</option></select></div>
+      <label class="toggle"><input type="checkbox" id="toggle-fav"> só favoritos ★</label>
+      <label class="toggle"><input type="checkbox" id="toggle-hidden"> mostrar ocultos</label>
+    </div>
+    <div id="cand-list" class="cards-grid"></div>
+  </section>
+  <section id="tab-regioes" class="tab-section" hidden>
+    <div class="section-header"><div><span class="eyebrow">02 · inteligência territorial</span><h2>Regiões <em>mapeadas</em></h2><p class="count">quinze regiões no raio de 2h de são paulo</p></div></div>
+    <div id="regions-list"></div>
+  </section>
+  <section id="tab-corretores" class="tab-section" hidden>
+    <div class="section-header"><div><span class="eyebrow">03 · relacionamento</span><h2>Corretores <em>especializados</em></h2><p class="count" id="brok-count"></p></div></div>
+    <div id="brokers-list"></div>
+  </section>
+  <section id="tab-buscar" class="tab-section" hidden>
+    <div class="section-header"><div><span class="eyebrow">04 · prospecção</span><h2>Buscar <em>listagens</em></h2><p class="count">atalhos filtrados em fazenda e sítio · 15-60 ha</p></div></div>
+    <div id="portals-list"></div>
+  </section>
+  <footer><span class="l">Ma Haven · Land Search · v3.0</span><span>re-arraste em app.netlify.com/drop (segure option para copiar)</span></footer>
+</div>
+<script>
+(function() {
+  const SEED_CANDIDATES = [{"id": "s1", "nome": "Fazenda 23 alqueires · Mairinque", "regiao": "Mairinque · Ibiúna · São Roque", "area_ha": 55.66, "preco": "R$ 7.000.000", "precoNum": 7000000, "corretora": "Imobiliária Mairinque", "tel": "(11) 97273-6871", "link": "https://imobiliariamairinque.com.br/imoveis/sitio-fazenda-com-23-alqueires-a-venda-por-r-7-000-000-cod-ch2073/", "linkStatus": "direct", "codigo": "ch2073", "notas": "Tamanho ideal pra 20-30 casas + clube. Sinergia operacional com Ma Haven 1.", "visual": "m1", "added": "mai-2026", "scores": {"acesso": 1, "area": 5, "topografia": 4, "distancia": 5, "infra": 4, "preco": 5, "aprovacoes": 3}}, {"id": "s2", "nome": "Fazenda 16,5 alqueires · Mairinque", "regiao": "Mairinque · Ibiúna · São Roque", "area_ha": 39.93, "preco": "R$ 3.200.000", "precoNum": 3200000, "corretora": "Imobiliária Mairinque", "tel": "(11) 97273-6871", "link": "https://imobiliariamairinque.com.br/imoveis/sitio-fazenda-a-venda-165-alqueires-por-r-3-200-000-cod-ch2400/", "linkStatus": "direct", "codigo": "ch2400", "notas": "Excelente custo-benefício. Sobra orçamento generoso pra infraestrutura.", "visual": "m2", "added": "mai-2026", "scores": {"acesso": 1, "area": 5, "topografia": 4, "distancia": 5, "infra": 4, "preco": 5, "aprovacoes": 3}}, {"id": "s3", "nome": "Fazenda 47 alqueires · beira Represa Santa Branca", "regiao": "Vale do Paraíba (Santa Branca, Natividade)", "area_ha": 113.74, "preco": "R$ 4.700.000", "precoNum": 4700000, "corretora": "Pirâmide Imóveis SJC", "tel": "consultar site", "link": "https://www.piramideimoveissjc.com.br/imovel/fazenda-santa-branca-3-quartos-47-alqueires-paulista/FA0006-PI", "linkStatus": "direct", "codigo": "FA0006-PI", "notas": "Contígua à represa, bairro Serrote, saída 83B Carvalho Pinto. Preço subiu de R$ 3,8M (briefing anterior). Vale due diligence pra regularização.", "visual": "v1", "added": "mai-2026", "scores": {"acesso": 5, "area": 5, "topografia": 4, "distancia": 4, "infra": 3, "preco": 5, "aprovacoes": 2}}, {"id": "s4", "nome": "Fazenda 21 alqueires · Nazaré Paulista", "regiao": "Nazaré Paulista", "area_ha": 50.82, "preco": "R$ 2.300.000", "precoNum": 2300000, "corretora": "João Mendes Imóveis", "tel": "consultar site", "link": "https://www.joaomendesimoveis.com.br/imobiliaria/nazare-paulista-sp/chacara-fazenda-sitio/imoveis/2851", "linkStatus": "direct", "codigo": "ID 2851", "notas": "Bairro 4 Cantos, divisa Piracaia. 6 km da D. Pedro. Doc regular. Custo-benefício excelente.", "visual": "n1", "added": "mai-2026", "scores": {"acesso": 2, "area": 5, "topografia": 4, "distancia": 5, "infra": 3, "preco": 5, "aprovacoes": 3}}, {"id": "s5", "nome": "Fazenda 24,2 ha · Amparo", "regiao": "Circuito das Águas (Amparo, Holambra, Socorro, Pinhalzinho)", "area_ha": 24.2, "preco": "R$ 6.000.000", "precoNum": 6000000, "corretora": "Reinaldo Imóveis (sugerido)", "tel": "consultar site", "link": "https://www.reinaldoimoveis.com.br/imoveis/a-venda/sitio+fazenda/amparo", "linkStatus": "search", "codigo": "—", "notas": "Sem listagem direta indexada. Faixa premium pra região. Contatar Reinaldo ou Mocambo com parâmetros (24 ha, R$ 6M).", "visual": "a1", "added": "mai-2026", "scores": {"acesso": 2, "area": 5, "topografia": 4, "distancia": 3, "infra": 4, "preco": 5, "aprovacoes": 3}}, {"id": "s6", "nome": "Fazenda 97 ha · Amparo (com sede)", "regiao": "Circuito das Águas (Amparo, Holambra, Socorro, Pinhalzinho)", "area_ha": 97, "preco": "R$ 12.720.000", "precoNum": 12720000, "corretora": "Reinaldo Imóveis", "tel": "consultar site", "link": "https://www.reinaldoimoveis.com.br/imoveis/a-venda/sitio+fazenda/amparo", "linkStatus": "catalog", "codigo": "FA0020-REK7", "notas": "968.000 m², 8 dorms / 8 suítes (sede grande já construída). Estratégia: 30 ha pro Ma Haven + 67 ha de reserva.", "visual": "a2", "added": "mai-2026", "scores": {"acesso": 2, "area": 4, "topografia": 4, "distancia": 3, "infra": 3, "preco": 4, "aprovacoes": 2}}, {"id": "s7", "nome": "Fazenda 48 alqueires · eixo Castello", "regiao": "Mairinque · Ibiúna · São Roque", "area_ha": 116.16, "preco": "R$ 9.600.000", "precoNum": 9600000, "corretora": "Imobiliária Mairinque", "tel": "(11) 97273-6871", "link": "https://imobiliariamairinque.com.br/imoveis/sitio-fazenda-a-venda-48-alqueires-por-r-9-600-000-cod-ch2352/", "linkStatus": "direct", "codigo": "ch2352", "notas": "Grande demais — daria pra parcelar metade pro Ma Haven e revender o restante. Estratégia de fasing.", "visual": "m3", "added": "mai-2026", "scores": {"acesso": 1, "area": 4, "topografia": 4, "distancia": 4, "infra": 3, "preco": 5, "aprovacoes": 2}}, {"id": "s8", "nome": "Fazenda 62 alqueires · rica em água · Joanópolis", "regiao": "Joanópolis", "area_ha": 150, "preco": "R$ 8.000.000", "precoNum": 8000000, "corretora": "MGF / Joanópolis Imóveis (sugerido)", "tel": "consultar site", "link": "https://www.mgfimoveis.com.br/venda/fazenda-sitio/sp-joanopolis", "linkStatus": "search", "codigo": "—", "notas": "Sem listagem direta. Topografia ótima, rica em água, vista represa (não confirmado pé na água). Contatar com parâmetros (62 alq, R$ 8M).", "visual": "j1", "added": "nov-2025", "scores": {"acesso": 3, "area": 3, "topografia": 5, "distancia": 4, "infra": 3, "preco": 5, "aprovacoes": 2}}, {"id": "s9", "nome": "Glebas pé na água · Represa do Jaguari", "regiao": "Piracaia", "area_ha": 16, "preco": "R$ 12.000.000", "precoNum": 12000000, "corretora": "Joanópolis Imóveis", "tel": "consultar site", "link": "https://joanopolisimoveis.com.br/propriedade/represa-gb8-glebas-exclusivas-pe-na-agua-piracaia-sp/", "linkStatus": "direct", "codigo": "GB8", "notas": "8 glebas de 20.000 m² com escritura individual, pé na água. Site lista 'a partir de R$ 812k por gleba' — confirmar pacote fechado.", "visual": "p1", "added": "nov-2025", "scores": {"acesso": 5, "area": 4, "topografia": 4, "distancia": 4, "infra": 3, "preco": 3, "aprovacoes": 4}}, {"id": "s10", "nome": "Fazenda 14,5 alqueires · Santa Branca (eucalipto)", "regiao": "Vale do Paraíba (Santa Branca, Natividade)", "area_ha": 35.09, "preco": "R$ 1.600.000", "precoNum": 1600000, "corretora": "Imóveis Eliezer", "tel": "consultar site", "link": "https://www.chavesnamao.com.br/imobiliaria/imoveis-eliezer/id-270080/", "linkStatus": "catalog", "codigo": "via catálogo", "notas": "11 alq eucalipto + 1 ha pasto + reserva. 5 km de Santa Branca. Doc completa (CAR, GEO, escritura, matrícula).", "visual": "v2", "added": "mai-2026", "scores": {"acesso": 3, "area": 4, "topografia": 4, "distancia": 4, "infra": 3, "preco": 5, "aprovacoes": 3}}, {"id": "s11", "nome": "Sítio pé na água · Represa do Jaguari · Piracaia", "regiao": "Piracaia", "area_ha": 12.27, "preco": "R$ 4.600.000", "precoNum": 4600000, "corretora": "Imobiliária Vale das Águas (Nelsinho)", "tel": "(11) 97109-6763", "link": "https://imobiliariavaledasaguas.com.br/properties/s003-belissimo-sitio-pe-na-agua-a-venda-na-represa-do-jaguari-piracaia-sp/", "linkStatus": "direct", "codigo": "S003", "notas": "Península da Fazenda Panorama, frente total pra represa, face norte. Casa principal + 2 casas de hóspedes + ~2.000 m² de benfeitorias. Licença ambiental Cetesb, APP no entorno. 12 ha é justo pra 20-30 casas + clube, avaliar densidade.", "visual": "p1", "added": "jun-2026", "scores": {"acesso": 4, "area": 3, "topografia": 4, "distancia": 4, "infra": 5, "preco": 5, "aprovacoes": 3}}, {"id": "s12", "nome": "Sítio 53 ha · vista Represa do Jaguari · Joanópolis", "regiao": "Joanópolis", "area_ha": 53.24, "preco": "R$ 3.000.000", "precoNum": 3000000, "corretora": "Imobiliária Vale das Águas (Nelsinho)", "tel": "(11) 97109-6763", "link": "https://imobiliariavaledasaguas.com.br/properties/s004-sitio-com-mata-nativa-a-venda-em-joanopolis-sp/", "linkStatus": "direct", "codigo": "S004", "notas": "Aos pés da Serra do Lopo, 19,36 ha de pasto + restante mata nativa. Beira da Rod. Entre Serras e Águas, asfalto na porta, 8 km do centro. Doc ok. Reserva de mata limita densidade construtiva.", "visual": "j1", "added": "jun-2026", "scores": {"acesso": 5, "area": 5, "topografia": 4, "distancia": 4, "infra": 2, "preco": 5, "aprovacoes": 3}}, {"id": "s13", "nome": "Sítio/Fazenda 12,7 alqueires · Mairinque", "regiao": "Mairinque · Ibiúna · São Roque", "area_ha": 30.73, "preco": "R$ 3.600.000", "precoNum": 3600000, "corretora": "Imobiliária Mairinque", "tel": "(11) 97273-6871", "link": "https://imobiliariamairinque.com.br/imoveis/sitio-fazenda-a-venda-127-alqueires-por-r-3-600-000-cod-ch2666/", "linkStatus": "direct", "codigo": "ch2666", "notas": "Área ideal pra 20-30 casas, eixo do projeto-mãe. Preço enxuto deixa folga generosa pra clube. Confirmar topografia, água e doc na visita.", "visual": "m2", "added": "jun-2026", "scores": {"acesso": 2, "area": 5, "topografia": 4, "distancia": 5, "infra": 3, "preco": 5, "aprovacoes": 3}}, {"id": "s14", "nome": "Fazendas beira represa · Represa de Paraibuna", "regiao": "Paraibuna · Represa de Paraibuna", "area_ha": 25, "preco": "R$ 8.000.000 (faixa)", "precoNum": 8000000, "corretora": "Imobiliária Maciel / Palermo de Castro / Vale Rural", "tel": "consultar site", "link": "https://www.imobiliariamaciel.com.br/comprar/Paraibuna/Rural/Fazenda,-Sitio-e-Chacara", "linkStatus": "search", "codigo": "—", "notas": "Ponteiro de região, não listagem única. Maciel lista 27 rurais ativos. Mercado tem fazendas de 40+ alqueires pé na água a ~R$ 120k/alqueire e chácaras na margem. Terra barata, maior espelho d'água do estado. Pedir glebas 15-30 ha com margem aos corretores.", "visual": "v1", "added": "jun-2026", "scores": {"acesso": 4, "area": 4, "topografia": 4, "distancia": 4, "infra": 2, "preco": 5, "aprovacoes": 2}}];
+  const REGIONS = [{"name": "Joanópolis", "slug": "joanopolis", "reservoir": "Represa Jaguari · Sistema Cantareira", "travel": "~1h45 de SP", "note": "Cabeceira do Cantareira. Fazendas grandes (60+ alqueires).", "priceRange": "Frente direta R$ 4–7M/ha · Vista R$ 200–500k/ha", "fit": "ALTO"}, {"name": "Bragança Paulista · Serrinha", "slug": "braganca-paulista", "reservoir": "Represa Jaguari", "travel": "~1h30 de SP", "note": "Bairro consolidado, premium estabelecido.", "priceRange": "Frente direta R$ 6–10M/ha", "fit": "ALTO"}, {"name": "Piracaia", "slug": "piracaia", "reservoir": "Represas Cachoeira & Jaguari", "travel": "~1h30 de SP", "note": "Mercado diverso. Glebas consolidáveis em fases.", "priceRange": "Frente direta R$ 750k–1,5M/ha", "fit": "ALTO"}, {"name": "Nazaré Paulista", "slug": "nazare-paulista", "reservoir": "Represa Atibainha", "travel": "~1h15 de SP", "note": "Próximo da capital, turístico/náutico estabelecido.", "priceRange": "Premium pela proximidade", "fit": "MÉDIO"}, {"name": "Igaratá", "slug": "igarata", "reservoir": "Represa Jaguari/Jacareí", "travel": "~1h15 de SP", "note": "Espelho d'água de 450 km². Mercado pulverizado.", "priceRange": "Variável", "fit": "MÉDIO"}, {"name": "Mairinque · Ibiúna · São Roque", "slug": "mairinque", "reservoir": "Represa Itupararanga", "travel": "~1h–1h30 de SP", "note": "Eixo do projeto-mãe. Sinergia operacional. São Roque agrega vinícolas.", "priceRange": "R$ 80–353k/ha", "fit": "ESTRATÉGICO"}, {"name": "Paraibuna · Represa de Paraibuna", "slug": "paraibuna", "reservoir": "Represa de Paraibuna · maior espelho d'água do estado", "travel": "~1h30 via Tamoios", "note": "Maior reservatório do estado. Terra muito barata, espelho único.", "priceRange": "Terra R$ 45–90k/ha · pé na água R$ 150–300k/ha", "fit": "MÉDIO-ALTO"}, {"name": "Vale do Paraíba (Santa Branca, Natividade)", "slug": "santa-branca", "reservoir": "Represa de Santa Branca", "travel": "~1h15 via Carvalho Pinto", "note": "Acesso melhor pela Carvalho Pinto. Natividade tem altitude.", "priceRange": "Terra R$ 33–60k/ha · pé na água R$ 150–250k/ha", "fit": "MÉDIO-ALTO"}, {"name": "Jacareí rural", "slug": "jacarei", "reservoir": "Represa Jaguari/Jacareí (lado oposto a Igaratá)", "travel": "~1h–1h15 via Carvalho Pinto", "note": "Lado oposto da Represa Jaguari/Jacareí. Mercado menos pulverizado.", "priceRange": "R$ 100–300k/ha", "fit": "MÉDIO-ALTO"}, {"name": "Joaquim Egídio · Atibaia rural", "slug": "atibaia", "reservoir": "Rios Atibaia e Jaguari", "travel": "~1h–1h15 de SP", "note": "APA Sousas-Joaquim Egídio. Restrições ambientais limitam densidade.", "priceRange": "R$ 370k–1,1M/ha", "fit": "MÉDIO"}, {"name": "Circuito das Águas (Amparo, Holambra, Socorro, Pinhalzinho)", "slug": "amparo", "reservoir": "Rio Camanducaia", "travel": "Amparo ~1h45 · Holambra ~1h30", "note": "Eixo turístico estabelecido, branding territorial forte.", "priceRange": "Amparo R$ 131–250k/ha · Holambra R$ 76k/ha", "fit": "ALTO"}, {"name": "Porto Feliz · Itu (eixo Fazenda Boa Vista)", "slug": "porto-feliz", "reservoir": "Rio Tietê · Sorocaba", "travel": "Itu ~1h15 · Porto Feliz ~1h30", "note": "Eixo JHSF Boa Vista. Demanda comprovada.", "priceRange": "Fora do condomínio R$ 200–500k/ha", "fit": "MÉDIO-ALTO"}, {"name": "Itatiba (eixo Quinta da Baroneza)", "slug": "itatiba", "reservoir": "Sem represa relevante", "travel": "~1h via Fernão Dias", "note": "Eixo Quinta da Baroneza. Terreno bruto escasso.", "priceRange": "Bruto R$ 300–800k/ha", "fit": "MÉDIO-ALTO"}, {"name": "Cabreúva", "slug": "cabreuva", "reservoir": "Sem represa relevante", "travel": "~1h de SP", "note": "Eixo Castello-Bandeirantes. Menos saturado que Itu.", "priceRange": "R$ 200–500k/ha", "fit": "MÉDIO"}, {"name": "Monte Mor", "slug": "monte-mor", "reservoir": "Rio Capivari", "travel": "~1h15 via Bandeirantes", "note": "Cidade pequena, mercado emergente.", "priceRange": "R$ 100–300k/ha (estimativa)", "fit": "MÉDIO-ALTO"}];
+  const SEED_BROKERS = [{"id": "b1", "nome": "Alexandre Quadros", "tier": "top", "regiao": "Bragança · Piracaia · Joanópolis", "tel": "(11) 97241-7504", "email": "alexgquadros@gmail.com", "site": "https://imoveisbragancaeregiao.com.br", "diff": "23 anos de mercado. CRECI 62.968. Fonte de listings premium do Sistema Cantareira.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b2", "nome": "Imobiliária Mairinque", "tier": "top", "regiao": "Mairinque · Itupararanga", "tel": "(11) 97273-6871 · (11) 4708-9204", "email": "", "site": "https://imobiliariamairinque.com.br", "diff": "Local Mairinque, eixo do projeto-mãe. Fonte das fazendas de 23, 16,5 e 48 alqueires.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b3", "nome": "Vale Rural Imóveis", "tier": "top", "regiao": "Paraibuna · Santa Branca", "tel": "(12) 99626-1530", "email": "", "site": "https://valeruralimoveis.com.br", "diff": "Especialista em rurais no Vale do Paraíba.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b4", "nome": "Palermo de Castro", "tier": "top", "regiao": "Paraibuna", "tel": "(12) 3500-0977 · (12) 99614-1460", "email": "", "site": "https://palermodecastro.com.br", "diff": "Listings reais em Paraibuna, fazendas com água abundante.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b5", "nome": "Carlos Guzzo (CRECI 39.208)", "tier": "top", "regiao": "Pinhalzinho · Socorro · Amparo", "tel": "(11) 96907-5170", "email": "", "site": "https://carlosguzzoimoveis.com.br", "diff": "CRECI verificável, foco Circuito das Águas.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b6", "nome": "JM Imóveis Atibaia", "tier": "top", "regiao": "Atibaia · Nazaré Paulista · Piracaia", "tel": "(11) 4402-2853 · (11) 94036-6681", "email": "", "site": "https://www.jmimoveisatibaia.com.br", "diff": "Referência em rurais Atibaia + Nazaré. Cobre Atibainha.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b7", "nome": "Wendell Cartaxo", "tier": "top", "regiao": "Piracaia · Joanópolis", "tel": "", "email": "", "site": "https://www.cartaxoimoveis.com.br", "diff": "'O Corretor entre Serras e Águas'. Áreas grandes.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b8", "nome": "AB Imóveis (Adriano Beltramelli)", "tier": "top", "regiao": "Joaquim Egídio · Sousas", "tel": "(19) 3298-6901", "email": "", "site": "https://www.abimoveis.com.br", "diff": "+30 anos. Escritório no centro de Joaquim Egídio.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b9", "nome": "Grupo Silvana Carvalho", "tier": "top", "regiao": "Itu · Porto Feliz · Boa Vista", "tel": "(11) 98890-6361", "email": "", "site": "https://imoveisdeluxo.silvanacarvalho.com.br", "diff": "Desde 2006 em condomínios de luxo. Referência em Boa Vista.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b10", "nome": "Andreatta Broker (David Andreatta)", "tier": "top", "regiao": "Boa Vista · Quinta da Baroneza", "tel": "", "email": "", "site": "https://www.andreattabroker.com.br", "diff": "Principal especialista em Fazenda Boa Vista desde 2012.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b11", "nome": "Fernando Vicente Imóveis", "tier": "top", "regiao": "Itu · Porto Feliz · Bragança", "tel": "", "email": "", "site": "https://www.fernandovicente.com.br", "diff": "Cobertura ampla dos condomínios premium do eixo Castello.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b12", "nome": "Rodrigo Sayão", "tier": "top", "regiao": "Joanópolis · Piracaia", "tel": "(11) 4381-0946", "email": "sayaoimoveis65@gmail.com", "site": "https://www.rodrigosayaoimoveis.com.br", "diff": "Carteira forte em fazendas de Joanópolis.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b13", "nome": "Pirâmide Imóveis SJC", "tier": "top", "regiao": "Santa Branca · Vale do Paraíba", "tel": "", "email": "", "site": "https://www.piramideimoveissjc.com.br", "diff": "Fonte da Fazenda 47 alq Santa Branca beira represa.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b14", "nome": "João Mendes Imóveis", "tier": "top", "regiao": "Nazaré Paulista", "tel": "", "email": "", "site": "https://www.joaomendesimoveis.com.br", "diff": "Fonte da Fazenda 21 alq Nazaré (R$ 2,3M).", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b15", "nome": "Reinaldo Imóveis", "tier": "top", "regiao": "Amparo · Circuito das Águas", "tel": "", "email": "", "site": "https://www.reinaldoimoveis.com.br", "diff": "Carteira de fazendas em Amparo (incluindo 97 ha por R$ 12,7M).", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b16", "nome": "Joanópolis Imóveis", "tier": "top", "regiao": "Joanópolis · Piracaia", "tel": "", "email": "", "site": "https://joanopolisimoveis.com.br", "diff": "Fonte das Glebas pé na água Piracaia (GB8).", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b17", "nome": "Polonia Imóveis", "tier": "regional", "regiao": "Piracaia", "tel": "(11) 4036-5144", "email": "", "site": "https://www.poloniimoveis.com", "diff": "Carteira na Represa Jaguari.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b18", "nome": "Feitá Imóveis", "tier": "regional", "regiao": "Piracaia · Joanópolis", "tel": "(11) 99633-2448", "email": "feita@feita.com.br", "site": "https://www.feitaimoveis.com.br", "diff": "40 anos. Fazenda de 80 alqueires em Joanópolis.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b19", "nome": "VBarros Imóveis", "tier": "regional", "regiao": "Ibiúna · Itupararanga", "tel": "(15) 99824-0707", "email": "", "site": "https://www.vbarrosimoveis.com.br", "diff": "Casas no Porto de Ibiúna.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b20", "nome": "Imobiliária Maciel", "tier": "regional", "regiao": "Paraibuna", "tel": "", "email": "", "site": "https://www.imobiliariamaciel.com.br", "diff": "27 listings rurais ativos em Paraibuna.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b21", "nome": "Innovatio Soluções", "tier": "regional", "regiao": "Jacareí · Vale do Paraíba", "tel": "(12) 99791-2238", "email": "", "site": "https://www.innovatiosolucoes.com.br", "diff": "Consultoria liderada pelo arquiteto Evandro Oliveira.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b22", "nome": "Imóveis Eliezer (Santa Branca)", "tier": "regional", "regiao": "Santa Branca", "tel": "", "email": "", "site": "https://www.chavesnamao.com.br/imobiliaria/imoveis-eliezer/id-270080/", "diff": "Fonte da Fazenda 14,5 alq Santa Branca eucalipto.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b23", "nome": "Cangianelli Imóveis", "tier": "regional", "regiao": "Região bragantina + Igaratá", "tel": "", "email": "", "site": "https://www.fabiocangianellimoveis.com.br", "diff": "Alto padrão na região bragantina.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b24", "nome": "Ricanelo", "tier": "regional", "regiao": "Piracaia · Bragança", "tel": "", "email": "", "site": "https://ricanelo.com.br", "diff": "Especialista em luxo na Represa do Jaguari.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b25", "nome": "KF Corretores Ibiúna", "tier": "regional", "regiao": "Ibiúna · Itupararanga", "tel": "", "email": "", "site": "https://www.kfcorretoresdeimoveis.com.br", "diff": "Listings pé na água Itupararanga.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b26", "nome": "Padrão Rural", "tier": "regional", "regiao": "Mairinque", "tel": "(11) 94011-7398", "email": "", "site": "https://www.padraoruralimobiliaria.com.br", "diff": "Local Mairinque, foco rural.", "status": "contatar", "lastContact": "", "notes": ""}, {"id": "b27", "nome": "Arruda & Filhos", "tier": "regional", "regiao": "Cabreúva", "tel": "(11) 4529-3136", "email": "", "site": "https://www.arrudaefilhosimoveis.com.br", "diff": "50 anos em Cabreúva.", "status": "contatar", "lastContact": "", "notes": ""}];
+  const STATUS_LABELS = { "contatar": "A contatar", "contatado": "Contatado", "conversa": "Em conversa", "visita": "Visitando", "descartado": "Descartado" };
+  const VARIANTS = {
+    "m1": {bg:"#EBE5D6",ink:"#3B4A3A",water:"#7A8C7C"},"m2": {bg:"#E9E3D4",ink:"#384738",water:"#788A78"},
+    "m3": {bg:"#E8E2D2",ink:"#3D4D3D",water:"#788A78"},"v1": {bg:"#E3DDCE",ink:"#2D3F35",water:"#5E7570"},
+    "v2": {bg:"#E6E0D1",ink:"#324034",water:"#6A8077"},"n1": {bg:"#E7E1D2",ink:"#36473A",water:"#728670"},
+    "a1": {bg:"#EDE7D8",ink:"#3E4F3E",water:"#80927E"},"a2": {bg:"#EAE4D5",ink:"#3C4D3C",water:"#7E907E"},
+    "j1": {bg:"#ECE6D8",ink:"#3F4F3F",water:"#7C8E7E"},"p1": {bg:"#E9E3D4",ink:"#3A4A3A",water:"#788A78"}
+  };
+  const CK = "mh-cand-v4", BK = "mh-brok-v3";
+
+  let state = {
+    candidates: [], brokers: [], activeTab: "candidatos",
+    sortBy: "score", filterRegion: "", filterBudget: "",
+    showFavOnly: false, showHidden: false
+  };
+
+  const esc = (s) => String(s || "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const CRIT_W = {acesso:1.2, area:1.3, topografia:1.0, distancia:1.0, infra:1.0, preco:1.5, aprovacoes:1.2};
+  const CRIT_MAX = Object.values(CRIT_W).reduce((a,b)=>a+5*b,0);
+  function score(c) { return Math.round(Object.entries(c.scores).reduce((a,[k,v])=>a+v*(CRIT_W[k]||0),0)/CRIT_MAX*100); }
+  function fitColor(f) { return ({"ALTO":"var(--sage-deep)","ESTRATÉGICO":"var(--bronze)","MÉDIO-ALTO":"var(--sage)","MÉDIO":"var(--terra)"})[f] || "var(--ink-muted)"; }
+
+  function svgLand(v) {
+    const x = VARIANTS[v] || {bg:"#E5DFD0",ink:"#2F3D33",water:"#6F8077"};
+    return '<svg viewBox="0 0 100 100" preserveAspectRatio="none"><rect width="100" height="100" fill="'+x.bg+'"/><path d="M 0 100 L 0 70 L 25 45 L 50 60 L 75 35 L 100 55 L 100 100 Z" fill="'+x.ink+'" opacity="0.16"/><path d="M 0 100 L 0 85 L 35 65 L 65 75 L 100 70 L 100 100 Z" fill="'+x.ink+'" opacity="0.3"/><rect x="0" y="80" width="100" height="20" fill="'+x.water+'" opacity="0.72"/></svg>';
+  }
+
+  function load() {
+    try { const c = localStorage.getItem(CK); state.candidates = c ? JSON.parse(c) : SEED_CANDIDATES.map(x => ({...x, favorite: false, hidden: false})); if (!c) localStorage.setItem(CK, JSON.stringify(state.candidates)); } catch(e) { state.candidates = SEED_CANDIDATES; }
+    try { const b = localStorage.getItem(BK); state.brokers = b ? JSON.parse(b) : SEED_BROKERS; if (!b) localStorage.setItem(BK, JSON.stringify(SEED_BROKERS)); } catch(e) { state.brokers = SEED_BROKERS; }
+    // Migration: ensure all candidates have favorite/hidden fields
+    state.candidates.forEach(c => { if (c.favorite === undefined) c.favorite = false; if (c.hidden === undefined) c.hidden = false; });
+  }
+  function saveC() { localStorage.setItem(CK, JSON.stringify(state.candidates)); }
+  function saveB() { localStorage.setItem(BK, JSON.stringify(state.brokers)); }
+
+  function renderTabs() {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === state.activeTab));
+    document.querySelectorAll('section.tab-section').forEach(s => { s.hidden = s.id !== 'tab-' + state.activeTab; });
+  }
+
+  function populateFilters() {
+    const sel = document.getElementById('filter-region'); const cur = sel.value;
+    sel.innerHTML = '<option value="">Todas</option>' + REGIONS.map(r => '<option value="'+esc(r.name)+'">'+esc(r.name)+'</option>').join("");
+    sel.value = cur;
+  }
+
+  function renderCandidates() {
+    let f = state.candidates.filter(c => c.area_ha >= 15);
+    if (!state.showHidden) f = f.filter(c => !c.hidden);
+    if (state.showFavOnly) f = f.filter(c => c.favorite);
+    if (state.filterRegion) f = f.filter(c => c.regiao === state.filterRegion);
+    if (state.filterBudget === "yes") f = f.filter(c => c.precoNum > 0 && c.precoNum <= 15000000);
+    if (state.filterBudget === "stretch") f = f.filter(c => c.precoNum > 15000000);
+
+    let sorted = [...f];
+    if (state.sortBy === "score") sorted.sort((a,b) => score(b) - score(a));
+    else if (state.sortBy === "area-desc") sorted.sort((a,b) => b.area_ha - a.area_ha);
+    else if (state.sortBy === "area-asc") sorted.sort((a,b) => a.area_ha - b.area_ha);
+    else if (state.sortBy === "price-desc") sorted.sort((a,b) => b.precoNum - a.precoNum);
+    else if (state.sortBy === "price-asc") sorted.sort((a,b) => (a.precoNum || 999999999) - (b.precoNum || 999999999));
+
+    document.getElementById('cand-count').textContent = sorted.length === 0 ? "nenhum terreno." : sorted.length + ' terreno' + (sorted.length > 1 ? "s" : "") + ' · ' + state.sortBy.replace('-', ' ');
+    const list = document.getElementById('cand-list');
+    if (sorted.length === 0) { list.innerHTML = '<div class="empty-state">Nenhum candidato com os filtros atuais.</div>'; return; }
+    list.innerHTML = sorted.map((c, i) => {
+      const sc = score(c);
+      const isNew = c.added === "jun-2026";
+      const cls = sc >= 75 ? 'top' : sc >= 60 ? 'high' : '';
+      const ls = c.linkStatus || 'direct';
+      const lsLabel = {direct:"Listagem direta",catalog:"Catálogo · buscar código",search:"Sem listagem · contatar"}[ls];
+      const linkText = {direct:"Ver listagem →",catalog:"Abrir catálogo →",search:"Abrir busca →"}[ls];
+      return '<article class="card '+(c.hidden?'is-hidden-card':'')+'">'
+        + '<div class="card-image">' + svgLand(c.visual || "j1")
+        + '<div class="badge-rank">'+String(i+1).padStart(2,"0")+'</div>'
+        + '<div class="badge-score"><div class="v '+cls+'">'+sc+'</div><div class="lbl">score</div></div>'
+        + (isNew ? '<div class="badge-new">Novo</div>' : '')
+        + '<div class="badge-fav '+(c.favorite?'':'off')+'" data-action="fav" data-id="'+c.id+'" title="Favoritar">★</div>'
+        + '</div>'
+        + '<div class="card-body">'
+        + '<div class="card-region">'+esc(c.regiao)+'</div>'
+        + '<h3>'+esc(c.nome)+'</h3>'
+        + '<div class="card-meta-row">'
+        + '<div class="col"><div class="label-cap">Área</div><div class="v">'+c.area_ha+' ha</div></div>'
+        + '<div class="col"><div class="label-cap">Preço</div><div class="v">'+esc(c.preco_str || c.preco)+'</div></div>'
+        + '<div class="col"><div class="label-cap">R$/ha</div><div class="v">'+(c.precoNum && c.area_ha ? 'R$ '+Math.round(c.precoNum/c.area_ha/1000)+'k' : '—')+'</div></div>'
+        + '</div>'
+        + (c.corretora ? '<div class="broker-info"><span class="label-cap">Corretor:</span> <strong>'+esc(c.corretora)+'</strong>'+(c.tel?' · '+esc(c.tel):'')+(c.codigo && c.codigo !== '—' ? ' · cod. '+esc(c.codigo):'')+'</div>' : '')
+        + '<div class="link-tag '+ls+'"><span class="dot"></span> '+lsLabel+'</div>'
+        + (c.notas ? '<p class="card-notes">'+esc(c.notas)+'</p>' : '')
+        + '<div class="card-actions">'
+        + (c.link ? '<a class="primary" href="'+esc(c.link)+'" target="_blank" rel="noopener">'+linkText+'</a>' : '')
+        + '<button data-action="hide" data-id="'+c.id+'" class="hide-btn">'+(c.hidden?'desocultar':'ocultar')+'</button>'
+        + '</div>'
+        + '</div></article>';
+    }).join("");
+  }
+
+  function renderRegions() {
+    document.getElementById('regions-list').innerHTML = REGIONS.map((r,i) =>
+      '<article class="region-row"><div class="region-num">'+String(i+1).padStart(2,"0")+'</div>'
+      + '<div><div class="region-name"><h3>'+esc(r.name)+'</h3><span class="region-fit" style="color: '+fitColor(r.fit)+'">'+r.fit+'</span></div>'
+      + '<div class="region-meta">'+esc(r.reservoir)+' · '+esc(r.travel)+'</div>'
+      + '<p class="region-note">'+esc(r.note)+'</p></div>'
+      + '<div class="region-price-block"><div class="label-cap" style="margin-bottom: 8px;">Faixa de preço</div><div class="region-price">'+esc(r.priceRange)+'</div></div>'
+      + '</article>').join("");
+  }
+
+  function renderBrokers() {
+    const sorted = [...state.brokers].sort((a,b) => { if (a.tier !== b.tier) return a.tier === "top" ? -1 : 1; return a.nome.localeCompare(b.nome); });
+    document.getElementById('brok-count').textContent = sorted.length + ' contatos · ' + sorted.filter(b => b.tier==='top').length + ' top';
+    document.getElementById('brokers-list').innerHTML = sorted.map(b => {
+      const sk = b.status || "contatar";
+      const sl = STATUS_LABELS[sk];
+      return '<div class="broker-card"><div class="broker-top">'
+        + '<div><h3>'+esc(b.nome)+' <span class="status-pill status-'+sk+'">'+sl+'</span></h3>'
+        + '<div class="broker-region">'+esc(b.regiao)+'</div></div>'
+        + '<span class="broker-tag '+(b.tier==='top'?'tag-top':'tag-regional')+'">'+(b.tier==='top'?'TOP':'REGIONAL')+'</span>'
+        + '</div>'
+        + '<div class="broker-contacts">'
+        + (b.tel?'<div>'+esc(b.tel)+'</div>':'')
+        + (b.email?'<div><a href="mailto:'+esc(b.email)+'">'+esc(b.email)+'</a></div>':'')
+        + (b.site?'<div><a href="'+esc(b.site)+'" target="_blank" rel="noopener">'+esc(b.site.replace(/^https?:\/\//,''))+'</a></div>':'')
+        + '</div>'
+        + (b.diff ? '<p class="broker-diff">'+esc(b.diff)+'</p>' : '')
+        + '<div class="broker-status-row">'
+        + '<div><label>Status</label><select data-bf="status" data-id="'+b.id+'">'
+        + Object.entries(STATUS_LABELS).map(([k,v]) => '<option value="'+k+'"'+(sk===k?' selected':'')+'>'+v+'</option>').join("")
+        + '</select></div>'
+        + '<div><label>Último contato</label><input type="text" data-bf="lastContact" data-id="'+b.id+'" value="'+esc(b.lastContact)+'"></div>'
+        + '</div>'
+        + '<div class="broker-notes-row"><label>Notas</label><textarea data-bf="notes" data-id="'+b.id+'" rows="2">'+esc(b.notes)+'</textarea></div>'
+        + '</div>';
+    }).join("");
+  }
+
+  function renderPortals() {
+    const groups = {};
+    REGIONS.forEach(r => {
+      const slug = r.slug;
+      [
+        ["VivaReal · sítio 15-60 ha", "https://www.vivareal.com.br/venda/sp/"+slug+"/sitio_residencial/?areaMinima=150000&areaMaxima=600000"],
+        ["VivaReal · fazenda 15-60 ha", "https://www.vivareal.com.br/venda/sp/"+slug+"/fazenda_residencial/?areaMinima=150000&areaMaxima=600000"],
+        ["Zap · fazenda/sítio 15-60 ha", "https://www.zapimoveis.com.br/venda/fazendas-sitios-chacaras/sp+"+slug+"/?areaMinima=150000&areaMaxima=600000"],
+        ["Compre Rural", "https://www.compre-rural.com/imoveis/sao-paulo/"+slug+"/"]
+      ].forEach(([p, u]) => { (groups[p] = groups[p] || []).push({region: r.name, url: u}); });
+    });
+    groups["Especialistas · Off-portal"] = [
+      {region: "Bragança & Região", url: "https://imoveisbragancaeregiao.com.br/imoveis-rurais-em-braganca/"},
+      {region: "Imobiliária Mairinque", url: "https://imobiliariamairinque.com.br"},
+      {region: "Cartaxo Imóveis", url: "https://www.cartaxoimoveis.com.br"},
+      {region: "Vale Rural", url: "https://valeruralimoveis.com.br"},
+      {region: "Palermo de Castro", url: "https://palermodecastro.com.br"},
+      {region: "Pirâmide Imóveis SJC", url: "https://www.piramideimoveissjc.com.br"},
+      {region: "João Mendes Imóveis (Nazaré)", url: "https://www.joaomendesimoveis.com.br"},
+      {region: "Reinaldo Imóveis (Amparo)", url: "https://www.reinaldoimoveis.com.br"},
+      {region: "Carlos Guzzo (Circuito das Águas)", url: "https://carlosguzzoimoveis.com.br"},
+      {region: "Joanópolis Imóveis", url: "https://joanopolisimoveis.com.br"},
+      {region: "Silvana Carvalho (Itu)", url: "https://imoveisdeluxo.silvanacarvalho.com.br"},
+      {region: "Andreatta Broker", url: "https://www.andreattabroker.com.br"}
+    ];
+    const order = ["VivaReal · sítio 15-60 ha","VivaReal · fazenda 15-60 ha","Zap · fazenda/sítio 15-60 ha","Compre Rural","Especialistas · Off-portal"];
+    document.getElementById('portals-list').innerHTML = order.map((p,i) => {
+      const links = groups[p] || [];
+      return '<div class="portal-group"><div class="portal-title"><span class="num">'+String(i+1).padStart(2,"0")+'</span><span>'+esc(p)+'</span></div>'
+        + '<div class="portal-links">'+links.map(l => '<a href="'+esc(l.url)+'" target="_blank" rel="noopener"><span>'+esc(l.region)+'</span><span>→</span></a>').join("")+'</div></div>';
+    }).join("");
+  }
+
+  function renderAll() { renderTabs(); populateFilters(); renderCandidates(); renderRegions(); renderBrokers(); renderPortals(); }
+
+  document.querySelectorAll('nav.tabs button').forEach(btn => btn.addEventListener('click', () => { state.activeTab = btn.dataset.tab; renderAll(); }));
+  document.getElementById('sort-by').addEventListener('change', e => { state.sortBy = e.target.value; renderCandidates(); });
+  document.getElementById('filter-region').addEventListener('change', e => { state.filterRegion = e.target.value; renderCandidates(); });
+  document.getElementById('filter-budget').addEventListener('change', e => { state.filterBudget = e.target.value; renderCandidates(); });
+  document.getElementById('toggle-fav').addEventListener('change', e => { state.showFavOnly = e.target.checked; renderCandidates(); });
+  document.getElementById('toggle-hidden').addEventListener('change', e => { state.showHidden = e.target.checked; renderCandidates(); });
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (confirm("Restaurar lista seed? Favoritos e ocultos serão perdidos.")) {
+      state.candidates = SEED_CANDIDATES.map(x => ({...x, favorite: false, hidden: false}));
+      saveC(); renderCandidates();
+    }
+  });
+  document.getElementById('btn-add').addEventListener('click', () => alert('Pra adicionar novos terrenos, use o refresh automático ou me chame.'));
+
+  document.addEventListener('click', e => {
+    const a = e.target.dataset.action;
+    if (!a) return;
+    const id = e.target.dataset.id;
+    const c = state.candidates.find(x => x.id === id);
+    if (!c) return;
+    if (a === 'fav') { c.favorite = !c.favorite; saveC(); renderCandidates(); }
+    if (a === 'hide') { c.hidden = !c.hidden; saveC(); renderCandidates(); }
+  });
+
+  document.addEventListener('change', e => {
+    const f = e.target.dataset.bf; const id = e.target.dataset.id;
+    if (!f || !id) return;
+    const b = state.brokers.find(x => x.id === id);
+    if (b) { b[f] = e.target.value; saveB(); }
+  });
+  document.addEventListener('input', e => {
+    if (e.target.tagName === 'TEXTAREA' && e.target.dataset.bf === 'notes') {
+      const b = state.brokers.find(x => x.id === e.target.dataset.id);
+      if (b) { b.notes = e.target.value; saveB(); }
+    }
+  });
+
+  load(); renderAll();
+})();
+</script>
+</body>
+</html>
