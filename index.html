@@ -368,7 +368,7 @@
   }
 
   function load() {
-    try { const c = localStorage.getItem(CK); state.candidates = c ? JSON.parse(c) : SEED_CANDIDATES.map(x => ({...x, favorite: false, hidden: false})); if (!c) localStorage.setItem(CK, JSON.stringify(state.candidates)); } catch(e) { state.candidates = SEED_CANDIDATES; }
+    try { const c = localStorage.getItem(CK); const old = c ? JSON.parse(c) : []; const om = {}; old.forEach(o => { om[o.id] = o; }); state.candidates = SEED_CANDIDATES.map(x => ({...x, favorite: !!(om[x.id] && om[x.id].favorite), hidden: !!(om[x.id] && om[x.id].hidden)})); old.forEach(o => { if (!SEED_CANDIDATES.some(x => x.id === o.id)) state.candidates.push(o); }); localStorage.setItem(CK, JSON.stringify(state.candidates)); } catch(e) { state.candidates = SEED_CANDIDATES; }
     try { const b = localStorage.getItem(BK); state.brokers = b ? JSON.parse(b) : SEED_BROKERS; if (!b) localStorage.setItem(BK, JSON.stringify(SEED_BROKERS)); } catch(e) { state.brokers = SEED_BROKERS; }
     // Migration: ensure all candidates have favorite/hidden fields
     state.candidates.forEach(c => { if (c.favorite === undefined) c.favorite = false; if (c.hidden === undefined) c.hidden = false; });
