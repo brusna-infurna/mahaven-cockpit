@@ -436,6 +436,7 @@
         + '<div class="col"><div class="label-cap">Área</div><div class="v">'+c.area_ha+' ha</div></div>'
         + '<div class="col"><div class="label-cap">Preço</div><div class="v">'+esc(c.preco_str || c.preco)+'</div></div>'
         + '<div class="col"><div class="label-cap">R$/ha</div><div class="v">'+(c.precoNum && c.area_ha ? 'R$ '+Math.round(c.precoNum/c.area_ha/1000)+'k' : '—')+'</div></div>'
+        + '<div class="col" style="grid-column:1/-1"><div class="label-cap">Densidade · 80 casas</div><div class="v">'+(c.area_ha ? Math.round(c.area_ha*10000/80).toLocaleString('pt-BR')+' m² brutos por casa · '+(c.area_ha*10000/80 >= 1500 ? (c.area_ha*10000/80 > 5000 ? 'cabe com folga' : 'cabe') : 'apertado') : '—')+'</div></div>'
         + '</div>'
         + (c.corretora ? '<div class="card-broker"><strong>'+esc(c.corretora)+'</strong>'+(c.tel?' · '+esc(c.tel):'')+(c.codigo && c.codigo !== '—' ? ' · cod. '+esc(c.codigo):'')+'</div>' : '')
         + '<div class="link-tag '+ls+'"><span class="dot"></span> '+lsLabel+'</div>'
