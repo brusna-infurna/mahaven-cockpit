@@ -409,7 +409,7 @@
     // Group by city
     const groups = {};
     sorted.forEach(c => { const k = c.cidade || c.regiao || 'Outros'; (groups[k] = groups[k] || []).push(c); });
-    const cityNames = Object.keys(groups).sort((a,b) => groups[b].length - groups[a].length);
+    const cityNames = Object.keys(groups).sort((a,b) => ((b==='Porto Feliz')-(a==='Porto Feliz')) || (groups[b].length - groups[a].length));
     let globalIdx = 0;
     list.innerHTML = cityNames.map((city, ci) => {
       const cards = groups[city].map((c) => {
